@@ -1,49 +1,65 @@
+import { prisma } from "../database/prisma";
 import { Chamado } from "../types/chamado";
 
-let chamados: Chamado[] = [];
-let proximoId = 1;
+const campos = {
+    id: true,
+    titulo: true,
+    descricao: true,
+    categoria: true,
+    prioridade: true,
+    status: true
+};
 
 export class ChamadoService {
 
-    listarTodos(): Chamado[] {
-        return chamados;
+    async listarTodos(): Promise<Chamado[]> {
+        const chamados = await prisma.chamado.findMany({
+            select: campos,
+            orderBy: { id: "asc" }
+        });
+
+        return chamados as Chamado[];
     }
 
-    buscarPorId(id: number): Chamado | undefined {
-        return chamados.find(chamado => chamado.id === id);
+    async buscarPorId(id: number): Promise<Chamado | undefined> {
+        const chamado = await prisma.chamado.findUnique({
+            where: { id },
+            select: campos
+        });
+
+        return (chamado as Chamado | null) ?? undefined;
     }
 
-    criar(dados: Omit<Chamado, "id" | "status">): Chamado {
+    async criar(dados: Omit<Chamado, "id" | "status">): Promise<Chamado> {
+        const chamado = await prisma.chamado.create({
+            data: { ...dados, status: "ABERTO" },
+            select: campos
+        });
 
-        const novoChamado: Chamado = {
-            id: proximoId++,
-            ...dados,
-            status: "ABERTO"
-        };
-
-        chamados.push(novoChamado);
-
-        return novoChamado;
+        return chamado as Chamado;
     }
 
-    atualizarStatus(
+    async atualizarStatus(
         id: number,
         status: Chamado["status"]
-    ): Chamado | undefined {
+    ): Promise<Chamado | undefined> {
 
-        const chamado = this.buscarPorId(id);
+        const existe = await this.buscarPorId(id);
 
-        if (!chamado) {
+        if (!existe) {
             return undefined;
         }
 
-        chamado.status = status;
+        const chamado = await prisma.chamado.update({
+            where: { id },
+            data: { status },
+            select: campos
+        });
 
-        return chamado;
+        return chamado as Chamado;
     }
 }
 
 export const chamadoService = new ChamadoService();
 
-// Lógica responsável por gerenciar os chamados, 
-// incluindo a criação, atualização e listagem dos mesmos.
+// Lógica responsável por gerenciar os chamados usando Prisma + PostgreSQL.
