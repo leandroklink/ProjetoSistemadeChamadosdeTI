@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HelpDesk — Chamados</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="logo">Help<span>Desk</span></a>
+      <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="chamados.html" class="ativo">Chamados</a>
+        <a href="novo-chamado.html">Novo chamado</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>Chamados</h1>
+        <p id="contador">Carregando...</p>
+      </div>
+      <a href="novo-chamado.html" class="btn">+ Novo chamado</a>
+    </div>
+
+    <div class="filtros">
+      <input type="search" id="busca" placeholder="Buscar por título, descrição ou #id" />
+      <select id="filtro-status">
+        <option value="">Todos os status</option>
+      </select>
+      <select id="filtro-prioridade">
+        <option value="">Todas as prioridades</option>
+      </select>
+      <select id="filtro-categoria">
+        <option value="">Todas as categorias</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="tabela-wrap" id="tabela">
+        <div class="estado">Carregando...</div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="js/chamados.js"></script>
+</body>
+</html>

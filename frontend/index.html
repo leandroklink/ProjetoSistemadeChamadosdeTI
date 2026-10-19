@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HelpDesk — Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="logo">Help<span>Desk</span></a>
+      <nav>
+        <a href="index.html" class="ativo">Dashboard</a>
+        <a href="chamados.html">Chamados</a>
+        <a href="novo-chamado.html">Novo chamado</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Visão geral dos chamados de suporte de TI</p>
+      </div>
+      <a href="novo-chamado.html" class="btn">+ Novo chamado</a>
+    </div>
+
+    <div id="conteudo"><div class="estado">Carregando...</div></div>
+  </main>
+
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
