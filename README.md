@@ -81,6 +81,96 @@ PostgreSQL
 
 ---
 
+## Como rodar localmente
+
+### Pré-requisitos
+
+* [Node.js](https://nodejs.org/) 20.6 ou superior
+* [PostgreSQL](https://www.postgresql.org/download/) instalado e em execução
+  * No Windows, o instalador oferece abrir o **Stack Builder** no final. Ele não é necessário e pode ser cancelado.
+  * Guarde a **senha** e a **porta** (padrão `5432`) definidas na instalação.
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/leandroklink/ProjetoSistemadeChamadosdeTI.git
+cd ProjetoSistemadeChamadosdeTI
+```
+
+### 2. Back-end (API)
+
+```bash
+cd backend
+npm install
+```
+
+Crie o arquivo `backend/.env` a partir do modelo:
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env` com os seus dados do PostgreSQL:
+
+```
+DATABASE_URL="postgresql://postgres:SUA_SENHA@localhost:5432/helpdesk?schema=public"
+```
+
+| Parte        | Significado                                             |
+|--------------|---------------------------------------------------------|
+| `postgres`   | Usuário do banco (padrão da instalação)                 |
+| `SUA_SENHA`  | Senha definida na instalação do PostgreSQL              |
+| `5432`       | Porta do PostgreSQL (confira se a sua não é outra, ex.: `5433`) |
+| `helpdesk`   | Nome do banco. É criado automaticamente no próximo passo |
+
+> Se a senha tiver caracteres especiais (`@`, `#`, `/`, `:`), eles precisam ser codificados (ex.: `@` → `%40`).
+>
+> O `.env` não é enviado ao GitHub (está no `.gitignore`).
+
+Crie as tabelas no banco e inicie a API:
+
+```bash
+npx prisma migrate dev
+npm run dev
+```
+
+A API ficará disponível em `http://localhost:3000`.
+
+| Método  | Rota                    | Descrição                  |
+|---------|-------------------------|----------------------------|
+| `GET`   | `/chamados`             | Lista todos os chamados    |
+| `GET`   | `/chamados/:id`         | Busca um chamado pelo id   |
+| `POST`  | `/chamados`             | Cria um chamado            |
+| `PATCH` | `/chamados/:id/status`  | Atualiza o status          |
+
+### 3. Front-end
+
+Em outro terminal, a partir da raiz do projeto:
+
+```bash
+cd frontend
+npm install
+npm run build
+npm run serve
+```
+
+Abra o endereço exibido no terminal (normalmente `http://localhost:3000` ou, se essa porta estiver ocupada pela API, outra porta como `http://localhost:XXXXX`).
+
+* `npm run build` compila os arquivos de `frontend/src` (TypeScript) para `frontend/js`.
+* Durante o desenvolvimento, use `npm run watch` para recompilar automaticamente.
+* O endereço da API usado pelo front-end fica em `frontend/src/config.ts`.
+
+### Problemas comuns
+
+| Erro | Causa provável |
+|------|----------------|
+| `P1000: Authentication failed` | Usuário ou senha incorretos no `DATABASE_URL` |
+| `P1001: Can't reach database server` | PostgreSQL parado ou porta incorreta no `DATABASE_URL` |
+| `Environment variable not found: DATABASE_URL` | Arquivo `backend/.env` não existe |
+| Front-end não carrega os chamados | API não está rodando ou `API_URL` em `config.ts` está incorreta |
+
+---
+
 ## Equipe
 
 ### Aluno 1 — API / Back-end
