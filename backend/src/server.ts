@@ -5,7 +5,8 @@ import chamadoRoutes from "./routes/chamadoRoutes";
 
 const app = express();
 
-const PORT = 3000;
+// Em produção, o serviço de hospedagem define a porta pela variável PORT.
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
