@@ -2,6 +2,8 @@
 
 Sistema simples de gerenciamento de chamados de TI, desenvolvido como projeto acadêmico.
 
+**Acesse:** https://leandroklink.github.io/ProjetoSistemadeChamadosdeTI/
+
 ---
 
 ## Sobre o projeto
@@ -171,6 +173,70 @@ Abra o endereço exibido no terminal (normalmente `http://localhost:3000` ou, se
 
 ---
 
+## Deploy
+
+A aplicação está publicada em três serviços gratuitos:
+
+| Parte | Serviço | Endereço |
+|-------|---------|----------|
+| Front-end | GitHub Pages | https://leandroklink.github.io/ProjetoSistemadeChamadosdeTI/ |
+| API | Render | https://helpdesk-api-ve4e.onrender.com |
+| Banco de dados | Neon (PostgreSQL) | Acessível apenas pela API |
+
+```
+Navegador
+    |
+    v
+GitHub Pages          entrega o HTML, CSS e JS do front-end
+    |
+    | HTTP / JSON
+    v
+Render                executa a API (Node.js / Express)
+    |
+    | Prisma
+    v
+Neon                  armazena os dados no PostgreSQL
+```
+
+* **GitHub Pages** só hospeda arquivos estáticos; não executa Node.js nem tem banco de dados.
+* **Render** mantém o servidor Express rodando. Ele não guarda arquivos permanentemente: a cada deploy, baixa o código do GitHub de novo.
+* **Neon** é onde os chamados ficam salvos. Se a API reiniciar, nenhum dado é perdido.
+
+### Como o deploy acontece
+
+O deploy é automático a cada merge na branch `main`:
+
+* **Front-end:** o workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) compila o TypeScript e publica a pasta `frontend` no GitHub Pages.
+* **API:** o Render detecta o novo commit, roda `npm install && npm run build` (gera o Prisma Client e aplica as migrations no Neon) e reinicia com `npm start`.
+
+O front-end escolhe a API automaticamente em `frontend/src/config.ts`: usa `localhost:3000` ao rodar localmente e a URL do Render quando está no GitHub Pages.
+
+### Configuração dos serviços
+
+**Neon**
+* Projeto criado na região São Paulo.
+* A connection string usada é a **sem connection pooling** (necessário para as migrations do Prisma).
+
+**Render (Web Service)**
+
+| Campo | Valor |
+|-------|-------|
+| Branch | `main` |
+| Root Directory | `backend` |
+| Build Command | `npm install && npm run build` |
+| Start Command | `npm start` |
+| Variável de ambiente | `DATABASE_URL` com a connection string do Neon |
+
+**GitHub Pages**
+* Em *Settings → Pages*, o *Source* deve estar em **GitHub Actions** (e não em *Deploy from a branch*, que publicaria só o README).
+
+### Observações
+
+* No plano gratuito, o Render **desliga a API após 15 minutos sem uso**. A primeira requisição depois disso leva cerca de 50 segundos. Antes de uma apresentação, abra a URL da API para "acordá-la".
+* A senha do banco fica apenas nas variáveis de ambiente do Render e no `.env` local, nunca no repositório.
+
+---
+
 ## Equipe
 
 ### Aluno 1 — API / Back-end
@@ -214,7 +280,7 @@ Responsável por:
 - [ ] Atribuir responsável
 - [ ] Histórico de chamados
 - [ ] Dashboard
-- [ ] Deploy
+- [x] Deploy
 
 ---
 
